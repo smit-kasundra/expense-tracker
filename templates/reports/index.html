@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+{% block title %}Reports - Finance Analyzer{% endblock %}
+{% block content %}
+<div class="col-md-3 col-lg-2 d-none d-md-block sidebar p-0">
+    <div class="p-3">
+        <a href="{{ url_for('dashboard.index') }}">Dashboard</a>
+        <a href="{{ url_for('transactions.index') }}">Transactions</a>
+        <a href="{{ url_for('budgets.index') }}">Budgets</a>
+        <a href="{{ url_for('goals.index') }}">Goals</a>
+        <a href="{{ url_for('analytics.index') }}">Analytics & ML</a>
+        <a href="{{ url_for('reports.index') }}" class="fw-bold">Reports</a>
+    </div>
+</div>
+
+<div class="col-md-9 col-lg-10 p-4">
+    <h2>Financial Reports</h2>
+    <p class="text-muted">Export your data and generate summaries.</p>
+
+    <div class="row mt-4">
+        <div class="col-md-6 mb-4">
+            <div class="card shadow-sm h-100">
+                <div class="card-body text-center d-flex flex-column justify-content-center">
+                    <i class="bi bi-file-earmark-pdf fs-1 text-danger mb-3"></i>
+                    <h5 class="card-title">Detailed PDF Report</h5>
+                    <p class="text-muted">Download a comprehensive PDF summarizing your income, expenses, and transactions.</p>
+                    <a href="{{ url_for('reports.download_pdf') }}" class="btn btn-danger mt-auto">
+                        Download PDF Report
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6 mb-4">
+            <div class="card shadow-sm h-100">
+                <div class="card-body text-center d-flex flex-column justify-content-center">
+                    <i class="bi bi-file-earmark-spreadsheet fs-1 text-success mb-3"></i>
+                    <h5 class="card-title">CSV Data Export</h5>
+                    <p class="text-muted">Export all your transaction data into a CSV file for backup or use in Excel.</p>
+                    <a href="{{ url_for('reports.export_csv') }}" class="btn btn-success mt-auto">
+                        Export as CSV
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

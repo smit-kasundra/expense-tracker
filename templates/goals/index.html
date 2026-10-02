@@ -1,0 +1,69 @@
+{% extends "base.html" %}
+{% block title %}Financial Goals - Finance Analyzer{% endblock %}
+{% block content %}
+<div class="col-md-3 col-lg-2 d-none d-md-block sidebar p-0">
+    <div class="p-3">
+        <a href="{{ url_for('dashboard.index') }}">Dashboard</a>
+        <a href="{{ url_for('transactions.index') }}">Transactions</a>
+        <a href="{{ url_for('budgets.index') }}">Budgets</a>
+        <a href="{{ url_for('goals.index') }}" class="fw-bold">Goals</a>
+        <a href="#">Analytics</a>
+        <a href="#">Reports</a>
+    </div>
+</div>
+
+<div class="col-md-9 col-lg-10 p-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2>Financial Goals</h2>
+        <a href="{{ url_for('goals.add') }}" class="btn btn-primary">+ Add Goal</a>
+    </div>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+
+    <div class="row">
+        {% for data in goal_data %}
+        <div class="col-md-6 mb-4">
+            <div class="card shadow-sm h-100">
+                <div class="card-body">
+                    <h5 class="card-title">{{ data.goal.name }}</h5>
+                    {% if data.goal.deadline %}
+                        <h6 class="card-subtitle mb-3 text-muted">Target Date: {{ data.goal.deadline.strftime('%Y-%m-%d') }}</h6>
+                    {% endif %}
+                    
+                    <div class="d-flex justify-content-between mb-1">
+                        <span>Saved: ₹{{ "%.2f"|format(data.goal.current_amount) }}</span>
+                        <span>Target: ₹{{ "%.2f"|format(data.goal.target_amount) }}</span>
+                    </div>
+                    
+                    <div class="progress mb-3" style="height: 25px;">
+                        <div class="progress-bar bg-success" role="progressbar" 
+                             style="width: {{ [data.progress, 100]|min }}%;" 
+                             aria-valuenow="{{ data.progress }}" aria-valuemin="0" aria-valuemax="100">
+                            {{ data.progress }}%
+                        </div>
+                    </div>
+
+                    <form action="{{ url_for('goals.update', id=data.goal.id) }}" method="POST" class="input-group">
+                        <input type="number" step="0.01" name="add_amount" class="form-control" placeholder="Add Amount (₹)" required>
+                        <button type="submit" class="btn btn-outline-primary">Update Progress</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+        {% else %}
+        <div class="col-12">
+            <p class="text-muted">No financial goals set. Click "Add Goal" to start saving!</p>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,152 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard - Finance Analyzer{% endblock %}
+
+{% block content %}
+<!-- Sidebar -->
+<div class="col-md-3 col-lg-2 d-none d-md-block sidebar p-0">
+    <div class="p-3">
+        <a href="{{ url_for('dashboard.index') }}" class="fw-bold">Dashboard</a>
+        <a href="{{ url_for('transactions.index') }}">Transactions</a>
+        <a href="{{ url_for('budgets.index') }}">Budgets</a>
+        <a href="{{ url_for('goals.index') }}">Goals</a>
+        <a href="{{ url_for('analytics.index') }}">Analytics & ML</a>
+        <a href="{{ url_for('reports.index') }}">Reports</a>
+    </div>
+</div>
+
+<!-- Main Content -->
+<div class="col-md-9 col-lg-10 p-4">
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+
+    <h2>Dashboard</h2>
+    <p class="text-muted">Welcome to your Personal Finance Analyzer, {{ current_user.username }}!</p>
+    
+    <!-- Top Cards -->
+    <div class="row mt-4">
+        <div class="col-md-3 mb-3">
+            <div class="card bg-success text-white shadow h-100">
+                <div class="card-body">
+                    <h6 class="card-title">Total Income</h6>
+                    <h4>₹{{ "%.2f"|format(total_income) }}</h4>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 mb-3">
+            <div class="card bg-danger text-white shadow h-100">
+                <div class="card-body">
+                    <h6 class="card-title">Total Expenses</h6>
+                    <h4>₹{{ "%.2f"|format(total_expense) }}</h4>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 mb-3">
+            <div class="card bg-info text-white shadow h-100">
+                <div class="card-body">
+                    <h6 class="card-title">Current Balance</h6>
+                    <h4>₹{{ "%.2f"|format(current_balance) }}</h4>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 mb-3">
+            <div class="card bg-primary text-white shadow h-100">
+                <div class="card-body">
+                    <h6 class="card-title">Highest Expense</h6>
+                    <small>{{ highest_category }}</small>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Charts and Insights -->
+    <div class="row mt-3">
+        <div class="col-md-8">
+            <div class="card shadow-sm mb-4">
+                <div class="card-body">
+                    {% if chart_json_2 %}
+                        <div id="chart2"></div>
+                    {% else %}
+                        <p class="text-muted text-center">Not enough data to display trend chart.</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card shadow-sm mb-4">
+                <div class="card-header bg-white">
+                    <h5 class="mb-0">Smart Insights</h5>
+                </div>
+                <div class="card-body">
+                    <ul class="list-group list-group-flush">
+                        {% for insight in insights %}
+                            <li class="list-group-item px-0"><i class="bi bi-lightbulb text-warning"></i> {{ insight }}</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Category Pie & Recent Transactions -->
+    <div class="row">
+        <div class="col-md-6 mb-4">
+            <div class="card shadow-sm h-100">
+                <div class="card-body">
+                    {% if chart_json_1 %}
+                        <div id="chart1"></div>
+                    {% else %}
+                        <p class="text-muted text-center">Not enough data to display category chart.</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6 mb-4">
+            <div class="card shadow-sm h-100">
+                <div class="card-header bg-white">
+                    <h5 class="mb-0">Recent Transactions</h5>
+                </div>
+                <div class="card-body p-0">
+                    <ul class="list-group list-group-flush">
+                        {% for tx in recent_transactions %}
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                <div>
+                                    <strong>{{ tx.category.name }}</strong><br>
+                                    <small class="text-muted">{{ tx.date.strftime('%Y-%m-%d') }}</small>
+                                </div>
+                                <span class="{% if tx.type == 'income' %}text-success{% else %}text-danger{% endif %} fw-bold">
+                                    {% if tx.type == 'income' %}+{% else %}-{% endif %}₹{{ "%.2f"|format(tx.amount) }}
+                                </span>
+                            </li>
+                        {% else %}
+                            <li class="list-group-item text-center text-muted">No transactions found.</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+<script>
+    {% if chart_json_1 %}
+        var chart1 = {{ chart_json_1 | safe }};
+        Plotly.newPlot('chart1', chart1.data, chart1.layout);
+    {% endif %}
+    {% if chart_json_2 %}
+        var chart2 = {{ chart_json_2 | safe }};
+        Plotly.newPlot('chart2', chart2.data, chart2.layout);
+    {% endif %}
+</script>
+{% endblock %}

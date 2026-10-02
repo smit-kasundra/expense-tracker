@@ -1,0 +1,69 @@
+{% extends "base.html" %}
+{% block title %}Add Transaction - Finance Analyzer{% endblock %}
+{% block content %}
+<div class="col-md-3 col-lg-2 d-none d-md-block sidebar p-0">
+    <div class="p-3">
+        <a href="{{ url_for('dashboard.index') }}">Dashboard</a>
+        <a href="{{ url_for('transactions.index') }}" class="fw-bold">Transactions</a>
+        <a href="{{ url_for('budgets.index') }}">Budgets</a>
+        <a href="{{ url_for('goals.index') }}">Goals</a>
+        <a href="#">Analytics</a>
+        <a href="#">Reports</a>
+    </div>
+</div>
+
+<div class="col-md-9 col-lg-10 p-4">
+    <h2>Add Transaction</h2>
+    <div class="card shadow-sm mt-4">
+        <div class="card-body">
+            <form method="POST">
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Type</label>
+                        <select name="type" class="form-select" required>
+                            <option value="expense">Expense</option>
+                            <option value="income">Income</option>
+                        </select>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Amount (₹)</label>
+                        <input type="number" step="0.01" name="amount" class="form-control" required>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Date</label>
+                        <input type="date" name="date" class="form-control" required>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Category</label>
+                        <select name="category_id" class="form-select" required>
+                            {% for cat in categories %}
+                                <option value="{{ cat.id }}">{{ cat.name }} ({{ cat.type }})</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Payment Method</label>
+                        <select name="payment_method" class="form-select">
+                            <option value="Cash">Cash</option>
+                            <option value="Debit Card">Debit Card</option>
+                            <option value="Credit Card">Credit Card</option>
+                            <option value="UPI">UPI</option>
+                            <option value="Net Banking">Net Banking</option>
+                        </select>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Description (Optional)</label>
+                        <input type="text" name="description" class="form-control">
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-primary mt-2">Save Transaction</button>
+                <a href="{{ url_for('transactions.index') }}" class="btn btn-secondary mt-2 ms-2">Cancel</a>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

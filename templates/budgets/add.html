@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+{% block title %}Set Budget - Finance Analyzer{% endblock %}
+{% block content %}
+<div class="col-md-3 col-lg-2 d-none d-md-block sidebar p-0">
+    <div class="p-3">
+        <a href="{{ url_for('dashboard.index') }}">Dashboard</a>
+        <a href="{{ url_for('transactions.index') }}">Transactions</a>
+        <a href="{{ url_for('budgets.index') }}" class="fw-bold">Budgets</a>
+        <a href="{{ url_for('goals.index') }}">Goals</a>
+        <a href="#">Analytics</a>
+        <a href="#">Reports</a>
+    </div>
+</div>
+
+<div class="col-md-9 col-lg-10 p-4">
+    <h2>Set Category Budget</h2>
+    <div class="card shadow-sm mt-4">
+        <div class="card-body">
+            <form method="POST">
+                <div class="mb-3">
+                    <label class="form-label">Category</label>
+                    <select name="category_id" class="form-select" required>
+                        {% for cat in categories %}
+                            <option value="{{ cat.id }}">{{ cat.name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Monthly Budget Limit (₹)</label>
+                    <input type="number" step="0.01" name="amount" class="form-control" required>
+                </div>
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Month</label>
+                        <select name="month" class="form-select" required>
+                            <option value="1">January</option>
+                            <option value="2">February</option>
+                            <option value="3">March</option>
+                            <option value="4">April</option>
+                            <option value="5">May</option>
+                            <option value="6">June</option>
+                            <option value="7">July</option>
+                            <option value="8">August</option>
+                            <option value="9">September</option>
+                            <option value="10">October</option>
+                            <option value="11">November</option>
+                            <option value="12">December</option>
+                        </select>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Year</label>
+                        <input type="number" name="year" class="form-control" value="2024" required>
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-primary mt-2">Save Budget</button>
+                <a href="{{ url_for('budgets.index') }}" class="btn btn-secondary mt-2 ms-2">Cancel</a>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
